@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "YanQu";
+  src: url("/fonts/%E9%80%A0%E5%AD%97%E5%B7%A5%E6%88%BF%E8%A8%80%E8%B6%A3%E4%BD%93.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  --portfolio-yellow: #e5f756;
+  --portfolio-gray: #c8d9d1;
+  --portfolio-muted: #8eaaa6;
+  --portfolio-green: #e5f756;
+  --portfolio-glow: #7af4c2;
+  --portfolio-black: #000000;
+  --portfolio-white: #ffffff;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--portfolio-yellow);
+  color: var(--portfolio-black);
+  font-family: "YanQu", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(122, 244, 194, 0.35);
+}
+
+.portfolio-display {
+  font-family: "YanQu", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+}
+
+.power-on-mask {
+  animation: power-on-mask 0.4s ease-in forwards;
+}
+
+.crt-sweep {
+  animation: crt-sweep 1.15s linear infinite;
+}
+
+@keyframes power-on-mask {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.02) scaleX(0.7);
+    filter: brightness(1.8);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scaleY(0.12) scaleX(1);
+    filter: brightness(2);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes crt-sweep {
+  from {
+    transform: translateY(-120%);
+  }
+
+  to {
+    transform: translateY(220%);
+  }
+}
