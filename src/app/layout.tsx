@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Tian Fu Portfolio",
+  title: "PiliPala Portfolio",
   description: "Portfolio game style showcase"
 };
 

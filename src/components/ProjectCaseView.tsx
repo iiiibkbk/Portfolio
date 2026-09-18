@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PROJECTS_CONFIG, projectImageMap, projects, type Project } from "../data/portfolio";
 import AboutModal from "./AboutModal";
 import ContactModal from "./ContactModal";
@@ -34,11 +34,9 @@ function ProjectGallery({
   const trackRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const offsetRef = useRef(0);
-  const windowStartRef = useRef(0);
   const dragRef = useRef({ active: false, pointerId: -1, startX: 0, startOffset: 0, moved: false });
   const hoverRef = useRef(false);
   const [dragging, setDragging] = useState(false);
-  const [windowStart, setWindowStart] = useState(0);
 
   const imageSize =
     layout === "horizontal"
@@ -47,9 +45,10 @@ function ProjectGallery({
   const gap = PROJECTS_CONFIG.gallery.gap;
   const step = imageSize.width + gap;
   const cycleWidth = Math.max(images.length * step, step);
-  const buffer = 3;
-  const visibleSlots = Math.max(1, Math.ceil(area.width / step) + 1);
-  const renderCount = images.length <= 1 ? 1 : visibleSlots + buffer * 2;
+  const repeatedImages = useMemo(
+    () => (images.length <= 1 ? images : Array.from({ length: 3 }, () => images).flat()),
+    [images]
+  );
 
   const normalize = (value: number) => {
     let next = value % cycleWidth;
@@ -73,7 +72,7 @@ function ProjectGallery({
     const imageIndex = normalizeIndex(Math.floor(absoluteX / step));
     const image = images[imageIndex];
     onImageClick?.({
-      src: image.replace(/-optimized\.png$/, ".png"),
+      src: image,
       width: imageSize.width * 1.2,
       height: imageSize.height * 1.2
     });
@@ -87,21 +86,11 @@ function ProjectGallery({
     }
 
     const normalized = normalize(value);
-    const nextWindowStart = Math.floor(normalized / step);
-    const innerOffset = normalized - nextWindowStart * step;
-
-    if (windowStartRef.current !== nextWindowStart) {
-      windowStartRef.current = nextWindowStart;
-      setWindowStart(nextWindowStart);
-    }
-
-    trackRef.current.style.transform = `translate3d(${-innerOffset}px, 0, 0)`;
+    trackRef.current.style.transform = `translate3d(${-normalized - cycleWidth}px, 0, 0)`;
   };
 
   useEffect(() => {
     offsetRef.current = 0;
-    windowStartRef.current = 0;
-    setWindowStart(0);
     syncWindow(0);
     let last = performance.now();
 
@@ -242,25 +231,20 @@ function ProjectGallery({
         style={{
           transform: "translate3d(0, 0, 0)",
           contain: "layout paint",
-          width: renderCount * step,
+          width: repeatedImages.length * step,
           height: imageSize.height
         }}
       >
-        {Array.from({ length: renderCount }, (_, slot) => {
-          const logicalIndex = windowStart + slot - buffer;
-          const imageIndex = normalizeIndex(logicalIndex);
-          const image = images[imageIndex];
-          const left = (slot - buffer) * step;
-          const isNearViewport = slot >= buffer - 1 && slot <= buffer + visibleSlots + 1;
+        {repeatedImages.map((image, slot) => {
+          const left = slot * step;
 
           return (
           <img
-            key={`${logicalIndex}-${image}`}
+            key={`${slot}-${image}`}
             src={image}
             alt=""
             width={imageSize.width}
             height={imageSize.height}
-            loading={isNearViewport ? "eager" : "lazy"}
             className="absolute top-0 max-w-none select-none"
             style={{ left, width: imageSize.width, height: imageSize.height }}
             decoding="async"
@@ -448,9 +432,8 @@ export default function ProjectCaseView({ project }: { project: Project }) {
             </div>
           ) : null}
 
-          {/* 项目展示图改回原始 .png，避免继续走优化版资源导致画面发糊 */}
           <ProjectGallery
-            images={activeTabData.images.map((src) => src.replace(/-optimized\.png$/, ".png"))}
+            images={activeTabData.images}
             layout={project.layout}
             area={hoverArea}
             paused={aboutOpen || contactOpen || Boolean(previewImage)}

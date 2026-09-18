@@ -146,10 +146,16 @@ export const PROJECTS_CONFIG = {
   }
 } as const;
 
-const generateImages = (folder: string, prefix: string, count: number, extraImages: string[] = [], excludeNumbers: number[] = []) => [
+const generateImages = (
+  folder: string,
+  prefix: string,
+  count: number,
+  extraImages: string[] = [],
+  excludeNumbers: number[] = []
+) => [
   ...Array.from({ length: count }, (_, index) => index + 1)
     .filter((index) => !excludeNumbers.includes(index))
-    .map((index) => `${folder}/${prefix}-${String(index).padStart(2, "0")}-optimized.png`),
+    .map((index) => `${folder}/${prefix}-${String(index).padStart(2, "0")}.webp`),
   ...extraImages
 ];
 
@@ -186,8 +192,8 @@ export const projects: Project[] = [
         prefix: "project-bingo-series-event",
         count: 17,
         extraImages: [
-          "/assets/projects/bingo-series/project-bingo-series-event/project-bingo-series-event-001-optimized.png",
-          "/assets/projects/bingo-series/project-bingo-series-event/project-bingo-series-event-002-optimized.png"
+          "/assets/projects/bingo-series/project-bingo-series-event/project-bingo-series-event-001.webp",
+          "/assets/projects/bingo-series/project-bingo-series-event/project-bingo-series-event-002.webp"
         ]
       },
       {
