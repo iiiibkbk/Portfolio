@@ -8,8 +8,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@next/env": "^16.3.5",
-    "@next/swc-darwin-x64": "^14.2.33",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.17.10",
     "next": "^14.2.0",
